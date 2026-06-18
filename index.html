@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AQ — Dokumentasjon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #C8102E;
+    --bg: #080808;
+    --bg1: #0f0f0f;
+    --bg2: #141414;
+    --border: rgba(255,255,255,0.07);
+    --border-strong: rgba(255,255,255,0.13);
+    --text: #f5f5f5;
+    --text2: #999;
+    --text3: #555;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.95);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-logo { font-size: 13px; font-weight: 700; letter-spacing: 0.18em; color: var(--text); text-transform: uppercase; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+
+  .hero {
+    padding: 64px 24px 56px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,16,46,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 20px;
+  }
+  .hero-eyebrow-line { width: 24px; height: 1px; background: var(--red); }
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(32px, 8vw, 44px);
+    font-weight: 700; line-height: 1.1; color: #fff;
+    margin-bottom: 20px; letter-spacing: -0.02em;
+  }
+  .hero h1 em { color: var(--red); font-style: normal; }
+  .hero-sub { font-size: 14px; color: var(--text2); max-width: 360px; line-height: 1.7; margin-bottom: 32px; }
+  .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .hero-stat { display: flex; flex-direction: column; gap: 3px; }
+  .hero-stat-num { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.03em; }
+  .hero-stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .quote-banner {
+    background: var(--bg1);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .quote-banner::before {
+    content: '\201C';
+    position: absolute; top: -10px; left: 16px;
+    font-size: 120px; color: var(--red); opacity: 0.12;
+    font-family: Georgia, serif; line-height: 1; pointer-events: none;
+  }
+  .quote-text {
+    font-size: 14px; line-height: 1.75; color: #ccc;
+    font-style: italic; position: relative; z-index: 1; margin-bottom: 12px;
+  }
+  .quote-text strong { color: #fff; font-style: normal; font-weight: 600; }
+  .quote-attr { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); }
+
+  /* ── TIMELINE STRIP ── */
+  .timeline-strip {
+    padding: 48px 24px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .strip-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 36px;
+  }
+  .strip-num { font-size: 11px; font-weight: 700; color: var(--red); letter-spacing: 0.12em; }
+  .strip-title { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); }
+  .strip-line { flex: 1; height: 1px; background: var(--border); }
+
+  .tl-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 0;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+    position: relative;
+  }
+  .tl-item.visible { opacity: 1; transform: translateY(0); }
+
+  .tl-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    padding-top: 4px;
+  }
+  .tl-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--red);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .tl-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border-strong);
+    margin-top: 6px;
+    min-height: 40px;
+  }
+  .tl-item:last-child .tl-line { display: none; }
+
+  .tl-content {
+    padding-bottom: 32px;
+    flex: 1;
+    min-width: 0;
+  }
+  .tl-item:last-child .tl-content { padding-bottom: 0; }
+
+  .tl-date {
+    font-size: 10px; font-weight: 700; color: var(--red);
+    letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 5px;
+  }
+  .tl-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .tl-body { font-size: 13px; color: var(--text2); line-height: 1.72; }
+
+  /* ── SECTIONS ── */
+  .section { padding: 48px 24px 0; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .section-num { font-size: 11px; font-weight: 700; color: var(--red); letter-spacing: 0.12em; }
+  .section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  .doc-card {
+    display: flex; align-items: center; gap: 16px; padding: 20px;
+    background: var(--bg1); border: 1px solid var(--border);
+    border-radius: 16px; margin-bottom: 12px; text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    position: relative; overflow: hidden;
+  }
+  .doc-card:active { transform: scale(0.985); border-color: rgba(200,16,46,0.4); }
+  .doc-icon-wrap {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--bg2); border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .doc-icon-wrap svg { width: 22px; height: 22px; color: var(--red); }
+  .doc-body { flex: 1; min-width: 0; }
+  .doc-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+  .doc-date { font-size: 12px; color: var(--text3); }
+  .doc-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 9px; border-radius: 6px; background: rgba(200,16,46,0.12); color: #e05068; flex-shrink: 0; }
+  .doc-chevron { color: var(--text3); flex-shrink: 0; }
+  .doc-chevron svg { width: 18px; height: 18px; }
+
+  .media-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .media-thumb {
+    border-radius: 12px; overflow: hidden; background: var(--bg2);
+    border: 1px solid var(--border); aspect-ratio: 1;
+    position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .media-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .media-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 8px 10px 10px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.75));
+    font-size: 11px; font-weight: 600; color: #fff; letter-spacing: 0.04em;
+  }
+  .media-placeholder {
+    width: 100%; height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px; color: var(--text3);
+  }
+  .media-placeholder svg { width: 28px; height: 28px; }
+  .media-placeholder span { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .media-full {
+    border-radius: 14px; overflow: hidden; background: var(--bg2);
+    border: 1px solid var(--border); margin-bottom: 10px; position: relative;
+  }
+  .media-full video { width: 100%; display: block; max-height: 320px; object-fit: cover; }
+  .media-full .media-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 12px 14px 14px; font-size: 12px; font-weight: 500; color: #fff;
+  }
+  .video-placeholder {
+    padding: 48px 0; display: flex; flex-direction: column;
+    align-items: center; gap: 10px; color: var(--text3);
+  }
+  .video-placeholder svg { width: 32px; height: 32px; }
+  .video-placeholder span { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .footer {
+    margin-top: 64px; padding: 32px 24px; border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .footer-logo { font-size: 20px; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--text3); letter-spacing: -0.02em; }
+  .footer-text { font-size: 12px; color: var(--text3); text-align: center; line-height: 1.6; }
+  .footer-rule { width: 32px; height: 1px; background: var(--border-strong); }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">AQ — Dokumentasjon</span>
+  <div class="nav-dot"></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="hero-eyebrow-line"></span>
+    Personlig dokumentasjon
+  </div>
+  <h1>Min side av<br><em>hendelsene</em></h1>
+  <p class="hero-sub">Alt dokumentert med tidsstempler, bilder, videoer og skriftlige bevis — fordi ord alene funka aldri.</p>
+  <div class="hero-meta">
+    <div class="hero-stat">
+      <span class="hero-stat-num">3+ (Men vart i flere år!)</span>
+      <span class="hero-stat-label">År dokumentert</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">2</span>
+      <span class="hero-stat-label">Formelle docs</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">100+</span>
+      <span class="hero-stat-label">Hendelser</span>
+    </div>
+  </div>
+</section>
+
+<div class="quote-banner">
+  <p class="quote-text">«Hvis jeg ikke hadde bevis hadde ingen trodd på meg. Alltid tror de på den som gråter og leker victim, NULL ANSVAR FOR SINE <strong>egene fuckings actions.</strong>»</p>
+  <div class="quote-attr">— AQ &nbsp;·&nbsp; Actions have consequences</div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline-strip">
+  <div class="strip-header">
+    <span class="strip-num">01</span>
+    <span class="strip-title">Tidslinje</span>
+    <span class="strip-line"></span>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Lindeberg — tidlig</div>
+      <div class="tl-title">Det begynner</div>
+      <div class="tl-body">Telefon-bråk sent på kvelden. Rommet mitt var en del unna så jeg hørte ikke noe da, til hun begyne å gå til kjøkken som er rett ved mitt romm og skrikke hele natta. Gjentatte forespørsler om å stopppe, --> ignorert.</div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Tyskland</div>
+      <div class="tl-title">Liten leilighet, null respekt</div>
+      <div class="tl-body">5 personer i én stue. R lukker dørene og skriker/ler på telefonen til 00:00+ / 01:00. Stefar og jeg sier stopp, ignorert og bare forsetter.</div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Stovner — 2+ år</div>
+      <div class="tl-title">Eskalering til 03:00–04:00++</div>
+      <div class="tl-body">Ingen stefar tilstede. Bråket verre enn noensinne STOPPA ALDRI SELV OM JEG, MOM OG FAFA SA DET TUSEN GANGER.  Skrikking hver eneste natt i flere år også har denne drittungen the audacity til å si "Jeg vil ikke høre din stemme".</div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Kjøkken-hendelsen</div>
+      <div class="tl-title">Avtalen med mamma</div>
+      <div class="tl-body">Etter konfrontasjon: mamma lager regel SOM ALLE BLE FUCKINGS ENIG MED, ikke snakk etter kl. 21:00. R aka drittungen brøt avtalen innen en måned. HAHAHAHA, hva faen er det hun driver med, går å løper hjemmefra får mamma til å gråte flere ganger, en avtale blir laget også er DET HUN SOM IKKE FØLGER REGELEN etter alt det der også følger du ikke REGELEN.</div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Sept. 2025 — Lindeberg</div>
+      <div class="tl-title">Katten</div>
+      <div class="tl-body">R henter en fuckings katt når jeg ville. jeg sa til mom gjør det klar til helvete og guess what jeg hadde rett. R Slutter å stelle den etter noen uker (Hypen døde). Mamma rydder bæsjen flere ganger også jeg som er allergisk og kan ikke puste riktig. og btw jeg sa flere fuckings ganger hvem er det som er ferdig med skole? har friår? er mestepaten hjemmme og kan faktisk ha tid til å passe på en katt? JEG! (les hele 2nd dokumentet)</div>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">16.01.2026</div>
+      <div class="tl-title">Katten nesten dør</div>
+      <div class="tl-body">Kl. 02:00 katten kveler seg på plast. jeg får den ut. Rydder opp plastikk + oppkast. R sitter på telefonen. Ingenting. + hun låste katten en gang i kjøkkene den mjauet i flere timer jeg trodde den var i rommet hennes så jeg vill ikke åpne den fordi hun komer til å klikke, men etter mange timer ga jeg lang faen, sto opp gikk mot døra også hører jeg mjau fra kjøkkene istedefor, (crazy) og ikke bare det hun flere ganger tokk med katten i rommet hennes lukket døra og sov, katten mjauet flere timer klorte døra og ville ut, jeg sa selv ikke lukk døra hvis du tar med katten, guess what the dickhead did it again</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DOCUMENTS -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Dokumenter</span>
+    <span class="section-line"></span>
+  </div>
+
+  <a class="doc-card" href="Mitt perspektiv av hendelsene.pdf" target="_blank">
+    <div class="doc-icon-wrap">
+      <svg fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+    </div>
+    <div class="doc-body">
+      <div class="doc-name">Mitt perspektiv av hendelsene</div>
+      <div class="doc-date">Ariyen Qarlik · 30.04.2025</div>
+    </div>
+    <span class="doc-badge">PDF</span>
+    <div class="doc-chevron">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+      </svg>
+    </div>
+  </a>
+
+  <a class="doc-card" href="Documenting the Actions of “R” Regarding the Cat (1).pdf" target="_blank">
+    <div class="doc-icon-wrap">
+      <svg fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+    </div>
+    <div class="doc-body">
+      <div class="doc-name">Documenting the Actions of "R" — The Cat</div>
+      <div class="doc-date">Ariyen Qarlik · 16.01.2026</div>
+    </div>
+    <span class="doc-badge">PDF</span>
+    <div class="doc-chevron">
+      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+      </svg>
+    </div>
+  </a>
+</section>
+
+<!-- IMAGES -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <span class="section-title">Bilder</span>
+    <span class="section-line"></span>
+  </div>
+  <div class="media-grid">
+    <div class="media-thumb">
+      <img src="BILDE1.jpeg" alt="Ett av tusen ganger" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 1</span></div>'">
+      <div class="media-label">Ett av tusen ganger</div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILDE2.jpg" alt="Skulle kaste søppel, så en pose med alchool (vin) og ikke en lav engang 14% thats crazy, det har ikke noe å si om hun drakk den eller ikke hvorfor faen var den der i det hele tatt" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 3</span></div>'">
+      <div class="media-label">Skulle kaste søppel, så en pose med alchool (vin) og ikke en lav engang 14% thats crazy, det har ikke noe å si om hun drakk den eller ikke hvorfor faen var den der i det hele tatt</div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILDE2.jpeg" alt="Bevis 4" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 4</span></div>'">
+      <div class="media-label">Randomly våkna sånn, dro jobb ( 8 timer ) dro hjem slitsom som faen, Sonja og drittungen hjemme og skrikker og skrikker all day.</div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILDE7.jpeg" alt="Bevis 5" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 5</span></div>'">
+      <div class="media-label">"Nei JEG SKAL HENTE KATT" </div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILD1.JPG" alt="Bevis 5" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 5</span></div>'">
+      <div class="media-label">"Typical behavior" </div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILD2.JPG" alt="Bevis 5" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 5</span></div>'">
+      <div class="media-label">"Hun henter katt, passer ikke på denn, andre vasker opp oppkast" </div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILD3.JPG" alt="Bevis 5" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 5</span></div>'">
+      <div class="media-label">"Nå tenk hva som hadde skjedd hvis jeg ikk var våken da det der skjedde" </div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILD4.png" alt="Bevis 5" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 5</span></div>'">
+      <div class="media-label">"tar under 1min å bytte vann btw, bare noen sekunder" </div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILD5.png" alt="Bevis 5" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 5</span></div>'">
+      <div class="media-label">"Well well well" </div>
+    </div>
+    <div class="media-thumb">
+      <img src="BILDE6.jpeg" alt="Bevis 6" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 6</span></div>'">
+      <div class="media-label">Bevis 6</div>
+      div class="media-thumb">
+      <img src="BILDE7.jpeg" alt="Bevis 2" onerror="this.parentElement.innerHTML='<div class=\'media-placeholder\'><svg fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.5\' viewBox=\'0 0 24 24\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><polyline points=\'21 15 16 10 5 21\'/></svg><span>Bilde 2</span></div>'">
+      <div class="media-label">Jeg og mom som putter ting i vannen til lager rom, mens drittungen er ute med venner når hun fikk beskje om å passe på sarah, hun hjalp ikke shiiiii med bæring, JEG, JEG BÆRT ALLE KLÆRNE, TINGENE DINE OG KJØRTE DE TIL DET ANDRE HUSET, JEG</div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEOS -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Videoer</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="media-full" id="vwrap1">
+    <video controls playsinline preload="metadata">
+      <source src="VIDEO1.mp4" type="video/mp4">
+    </video>
+    <div class="media-label">Video 1</div>
+  </div>
+  <div class="media-full" id="vwrap2">
+    <video controls playsinline preload="metadata">
+      <source src="VIDEO2.mp4" type="video/mp4">
+    </video>
+    <div class="media-label">Video 2</div>
+  </div>
+  <div class="media-full" id="vwrap3">
+    <video controls playsinline preload="metadata">
+      <source src="VIDEO4.mp4" type="video/mp4">
+    </video>
+    <div class="media-label">Video 3</div>
+     <div class="media-full" id="vwrap3">
+    <video controls playsinline preload="metadata">
+      <source src="VIDEO5.mp4" type="video/mp4">
+    </video>
+    <div class="media-label">Video 3</div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-rule"></div>
+  <div class="footer-logo">AQ</div>
+  <p class="footer-text">Privat dokumentasjon · Ariyen Qarlik<br>2025 – 2026</p>
+</footer>
+
+<script>
+  // Animate timeline items on scroll
+  const items = document.querySelectorAll('.tl-item');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 120);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  items.forEach(el => io.observe(el));
+
+  // Replace broken video wrappers with placeholder
+  ['vwrap1','vwrap2','vwrap3'].forEach((id, i) => {
+    const wrap = document.getElementById(id);
+    const vid = wrap.querySelector('video');
+    vid.addEventListener('error', () => {
+      const label = wrap.querySelector('.media-label').textContent;
+      wrap.innerHTML = '<div class="video-placeholder"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>' + label + '</span></div>';
+    });
+  });
+</script>
+</body>
+</html>
